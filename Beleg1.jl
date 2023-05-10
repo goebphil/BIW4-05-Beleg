@@ -4,15 +4,15 @@ using QuadGK
 #iΩ = im * Ω
 
 #  Koeffizienten einer gebrochenrationalen Approximation der Steifigkeit
-P0 = 1.03377065e7
-P1 = 4.8744172e4
-P2 = 4.55205728e2
+P0 = 10337706.5
+P1 = 48744.172
+P2 = 455.205728
 P3 = 1.13950676
-P4 = 4.83245447e-3
+P4 = 0.00483245447
 P5 = 3.11054119e-6
 
 Q0 = 1
-Q1 = 4.90648418e-3
+Q1 = 0.00490648418
 Q2 = 2.71147593e-5
 Q3 = 5.42912842e-8
 Q4 = 6.94958499e-12
@@ -27,13 +27,13 @@ s1_0 = P5/Q4
 s0_0 = (P4-s1_0*Q3)/Q4
 r3_0 = P3-s0_0*Q3-s1_0*Q2
 r2_0 = P2-s0_0*Q2-s1_0*Q1
-r1_0 = P1-s0_0*Q1
+r1_0 = P1-s0_0*Q1-s1_0
 r0_0 = P0-s0_0
 
 
 s1_1 = Q4/r3_0
 s0_1 = (Q3-s1_1*r2_0)/r3_0
-r2_1 = Q2-s0_1-s1_1*r1_0
+r2_1 = Q2-s0_1*r2_0-s1_1*r1_0
 r1_1 = Q1-s0_1*r1_0-s1_1*r0_0
 r0_1 = Q0-s0_1*r0_0
 
@@ -86,23 +86,28 @@ println(r)
 
 l = 0.01
 
+#Zeitschrittlänge
+t = 0.0001 #s
 
-t = 0.001
+#Anzahl der Iteratiosschritte
+j_ges = Int(1/t+1)
+j_Schritt = Int(1/t)
+#Befüllen der Anfangsarrays
 z0 = [0;0;0;0;0]
 z2 = [0;0;0;0;0]
 
 
-# Erstellen eines 1000 x 1-Arrays gefüllt mit Nullen
-j = zeros(1001, 1)
+# Erstellen eines Arrays über die Zeitschritte, für in die Integration
+j = zeros(j_ges, 1)
 
-# Schleife über die Zeilen des Arrays
-for i in 1:1001
-    # Setzen des Werts in der aktuellen Zeile entsprechend der Bedingung
+
+for i in 1:j_ges
     j[i, 1] = (i - 1) * t
 end
 
-# Ausgabe des Arrays
 
+
+# Funktionen von F(t)
 
 function F1(k)
      return [1;0;0;0;0]*100000/0.01*k
@@ -116,49 +121,49 @@ end
 
 
 
-for i =1:1001
+for i =1:j_ges
 
      if i == 1
-          f = [1;0;0;0;0]*100/0.01*j[i]
           z1 = (A+0.001/2*B)^-1 * (F1(j[i])+F1(j[i+1]))/2*t
           global z2 = z2 + z1
           global z0 = z1
 
      end
 
-     if i>1 && i<=100
-          f = [1;0;0;0;0]*100/0.01*j[i]
-          z1 = (A+t/2*B)^-1 * ((F1(j[i])+F1(j[i+1]))/2*t-(t/2*B-A)*z0)
-          global z2 = z2 + z1
-          global z0 = z1
-          println(z0)
-     end
-
-     if i>100 && i<=200
-          f = [1;0;0;0;0]*100
-          z1 = (A+t/2*B)^-1 * (F2*t-(t/2*B-A)*z0)
+     if i>1 && i<=0.1*j_Schritt
+          z1 = inv((A+t/2*B)) * ((F1(j[i])+F1(j[i+1]))/2*t-(t/2*B-A)*z0)
           global z2 = z2 + z1
           global z0 = z1
 
      end
 
-     if i>200 && i<=300
-          f = [1;0;0;0;0]*(100 - 100/0.01*j[i])
-          z1 = (A+t/2*B)^-1 * ((F3(j[i])+F3(j[i+1]))/2*t-(t/2*B-A)*z0)
+     if i>0.1*j_Schritt && i<=0.2*j_Schritt
+          z1 = inv((A+t/2*B)) * (F2*t-(t/2*B-A)*z0)
+          global z2 = z2 + z1
+          global z0 = z1
+
+
+     end
+
+     if i>0.2*j_Schritt && i<=0.3*j_Schritt
+          z1 = inv((A+t/2*B)) * ((F3(j[i])+F3(j[i+1]))/2*t-(t/2*B-A)*z0)
+          global z2 = z2 + z1
+          global z0 = z1
+
+     end
+
+     if i>0.3*j_Schritt
+          z1 = inv(A+t/2*B) * -(t/2*B-A)*z0
           global z2 = z2 + z1
           global z0 = z1
      end
 
-     if i>300
-          z1 = (A+i/2*B)^-1 * (-t/2*B-A)*z0
-          global z2 = z2 + z1
-          global z0 = z1
-     end
-
-     if i == 1001
+     if i == j_ges
      println()
-     println("Lösung für z1")
+     println("Lösung für z1 im letzten Schritt")
      println(z0)
+#      println("Lösung für Summe aller Integrationsschritte")
+#      println(z2)
      end
 end
 
