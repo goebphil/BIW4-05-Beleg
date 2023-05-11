@@ -1,5 +1,4 @@
 using LinearAlgebra
-using QuadGK
 
 
 #  Koeffizienten einer gebrochenrationalen Approximation der Steifigkeit
@@ -124,14 +123,14 @@ for i =1:j_ges
 
      end
 
-     if i>1 && i<=0.1*j_Schritt
+     if i>1 && i<=0.01*j_Schritt
           z1 = inv((A+t/2*B)) * ((F1(j[i])+F1(j[i+1]))/2*t-(t/2*B-A)*z0)
           global z2 = z2 + z1
           global z0 = z1
 
      end
 
-     if i>0.1*j_Schritt && i<=0.2*j_Schritt
+     if i>0.01*j_Schritt && i<=0.02*j_Schritt
           z1 = inv((A+t/2*B)) * (F2*t-(t/2*B-A)*z0)
           global z2 = z2 + z1
           global z0 = z1
@@ -139,14 +138,14 @@ for i =1:j_ges
 
      end
 
-     if i>0.2*j_Schritt && i<=0.3*j_Schritt
+     if i>0.02*j_Schritt && i<=0.03*j_Schritt
           z1 = inv((A+t/2*B)) * ((F3(j[i])+F3(j[i+1]))/2*t-(t/2*B-A)*z0)
           global z2 = z2 + z1
           global z0 = z1
 
      end
 
-     if i>0.3*j_Schritt
+     if i>0.03*j_Schritt
           z1 = inv(A+t/2*B) * -(t/2*B-A)*z0
           global z2 = z2 + z1
           global z0 = z1
