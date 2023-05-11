@@ -1,7 +1,6 @@
 using LinearAlgebra
 using QuadGK
 
-#iΩ = im * Ω
 
 #  Koeffizienten einer gebrochenrationalen Approximation der Steifigkeit
 P0 = 10337706.5
@@ -18,7 +17,7 @@ Q3 = 5.42912842e-8
 Q4 = 6.94958499e-12
 
 ###############################################################################
-#Aufgabe a)
+
 
 
 #Abspaltung
@@ -77,17 +76,12 @@ println(B)
 println(r)
 
 
-###############################################################################
-#Aufgabe b)
 
 ###############################################################################
-#Aufgabe c)
 
-
-l = 0.01
 
 #Zeitschrittlänge
-t = 0.0001 #s
+t = 0.000001 #s
 
 #Anzahl der Iteratiosschritte
 j_ges = Int(1/t+1)
@@ -158,16 +152,8 @@ for i =1:j_ges
           global z0 = z1
      end
 
-     if i == j_ges
-     println()
-     println("Lösung für z1 im letzten Schritt")
-     println(z0)
-#      println("Lösung für Summe aller Integrationsschritte")
-#      println(z2)
-     end
 end
 
-# println()
-# println("Lösung für z1")
-# println(z0)
-#test
+println("Lösung für z1")
+println(z0)
+
