@@ -1,5 +1,5 @@
 using LinearAlgebra
-
+using Plots
 
 #  Koeffizienten einer gebrochenrationalen Approximation der Steifigkeit
 P0 = 10337706.5
@@ -51,7 +51,7 @@ s0_4 = r0_2/r0_3
 s1_4 = r1_2/r0_3
 
 
-f0 = P0/Q0
+f0 = 0
 
 
 A = [s1_0 0 0 0 0;
@@ -68,7 +68,7 @@ B = [s0_0 1 0 0 0;
 
 
 
-r = [f0;0;0;0;0]
+r = [0;0;0;0;0]
 
 println(A)
 println(B)
@@ -80,15 +80,17 @@ println(r)
 
 
 #Zeitschrittlänge
-t = 0.000001 #s
+t = 0.0001 #s
 
 #Anzahl der Iteratiosschritte
 j_ges = Int(1/t+1)
 j_Schritt = Int(1/t)
+println("Anzahl der Zeitschritte: ",j_Schritt)
 #Befüllen der Anfangsarrays
 z0 = [0;0;0;0;0]
 z2 = [0;0;0;0;0]
 
+z3 = zeros(j_ges)
 
 # Erstellen eines Arrays über die Zeitschritte, für in die Integration
 j = zeros(j_ges, 1)
@@ -128,6 +130,7 @@ for i =1:j_ges
           global z2 = z2 + z1
           global z0 = z1
 
+
      end
 
      if i>0.01*j_Schritt && i<=0.02*j_Schritt
@@ -143,16 +146,21 @@ for i =1:j_ges
           global z2 = z2 + z1
           global z0 = z1
 
+
      end
 
      if i>0.03*j_Schritt
           z1 = inv(A+t/2*B) * -(t/2*B-A)*z0
           global z2 = z2 + z1
           global z0 = z1
+
      end
+     z3[i] = z1[1]
 
 end
 
 println("Lösung für z1")
 println(z0)
 
+plot(j, z3, xlabel = "Sekunden", ylabel = "Werte für z1")
+savefig("plot.png")
