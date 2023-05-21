@@ -1,4 +1,3 @@
-using LinearAlgebra
 using Plots
 
 #  Koeffizienten einer gebrochenrationalen Approximation der Steifigkeit
@@ -79,23 +78,25 @@ println(r)
 ###############################################################################
 
 
-#Zeitschrittlänge
+#Zeitschrittlänge wird hier im Skript mit t anstatt delta t beschrieben
 t = 0.0001 #s
 
 #Anzahl der Iteratiosschritte
+# Die Anzahl der Iterationsschritte ergeben sich aus der Größe von t
+
+
 j_ges = Int(1/t+1)
 j_Schritt = Int(1/t)
 println("Anzahl der Zeitschritte: ",j_Schritt)
+
 #Befüllen der Anfangsarrays
 z0 = [0;0;0;0;0]
-z2 = [0;0;0;0;0]
 
+#Array für die Darstellung des Plots
 z3 = zeros(j_ges)
 
 # Erstellen eines Arrays über die Zeitschritte, für in die Integration
 j = zeros(j_ges, 1)
-
-
 for i in 1:j_ges
     j[i, 1] = (i - 1) * t
 end
@@ -103,7 +104,7 @@ end
 
 
 # Funktionen von F(t)
-
+# Diese sind in 3 Teilen unterteilt, wie aus der Grafik in der Aufgabenstellung zu entnehmen ist
 function F1(k)
      return [1;0;0;0;0]*100000/0.01*k
 end
@@ -115,50 +116,40 @@ function F3(k)
 end
 
 
-
+# Integration über den Gesamten Zeitbereich von 1 Sekunden
+# Dabei wird mit der if Anweisung geschaut, in welchem Bereichen des Graphen man sich befindet
 for i =1:j_ges
 
      if i == 1
           z1 = (A+0.001/2*B)^-1 * (F1(j[i])+F1(j[i+1]))/2*t
-          global z2 = z2 + z1
           global z0 = z1
-
      end
 
      if i>1 && i<=0.01*j_Schritt
           z1 = inv((A+t/2*B)) * ((F1(j[i])+F1(j[i+1]))/2*t-(t/2*B-A)*z0)
-          global z2 = z2 + z1
           global z0 = z1
-
-
      end
 
      if i>0.01*j_Schritt && i<=0.02*j_Schritt
           z1 = inv((A+t/2*B)) * (F2*t-(t/2*B-A)*z0)
-          global z2 = z2 + z1
           global z0 = z1
-
-
      end
 
      if i>0.02*j_Schritt && i<=0.03*j_Schritt
           z1 = inv((A+t/2*B)) * ((F3(j[i])+F3(j[i+1]))/2*t-(t/2*B-A)*z0)
-          global z2 = z2 + z1
           global z0 = z1
-
-
      end
 
      if i>0.03*j_Schritt
           z1 = inv(A+t/2*B) * -(t/2*B-A)*z0
-          global z2 = z2 + z1
           global z0 = z1
-
      end
+
      z3[i] = z1[1]
 
 end
 
+#Ausgabe der Ergebnisse
 println("Lösung für z1")
 println(z0)
 
