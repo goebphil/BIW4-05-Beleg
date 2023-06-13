@@ -100,5 +100,5 @@ end
 println("Lösung für z1")
 println(z0)
 
-plot(z3, xlabel="Sekunden", ylabel="Werte für z1")
+plot(z3, xlabel="Anzahl der Iterationsschritte", ylabel="Werte für z1")
 savefig("plot.png")
