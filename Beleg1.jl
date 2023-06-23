@@ -73,11 +73,11 @@ z0 = [0;0;0;0;0]
 
 function Belastung(t)
     if t < 0 && t < 0.01
-        return t * [100000; 0; 0; 0; 0]
+        return (t-0.01)/0.01 * [100000; 0; 0; 0; 0]
     elseif t <= 0.01 && t < 0.02
         return [100000; 0; 0; 0; 0]
     elseif t <= 0.02 && t < 0.03
-        return -t * [100000; 0; 0; 0; 0]
+        return (0.02-t)/0.01 * [100000; 0; 0; 0; 0]
     else
         return [0;0;0;0;0]
     end
